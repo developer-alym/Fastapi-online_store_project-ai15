@@ -1,4 +1,8 @@
-SECRET_KEY = '6062960ae079764c11ddc6e5abc0694a984f9582c5dfefc04d66b24d9de764ce'
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 ACCESS_EXPIRE_TOKEN = 60
 REFRESH_EXPIRE_TOKEN = 3
