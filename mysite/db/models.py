@@ -4,6 +4,7 @@ from sqlalchemy import Integer, String, Enum, Date, ForeignKey, Text, Boolean
 from mysite.db.database import Base
 from enum import Enum as PyEnum
 from datetime import date
+import bcrypt
 
 class UserStatus(str, PyEnum):
     gold = 'gold'
@@ -28,7 +29,17 @@ class UserProfile(Base):
 
     review_user: Mapped[List['Review']] = relationship('Review', back_populates='user',
                                                        cascade='all, delete-orphan')
+    refresh_user: Mapped[List['RefreshToken']] = relationship('RefreshToken', back_populates='user',
+                                                              cascade='all, delete-orphan')
 
+class RefreshToken(Base):
+    __tablename__ = 'refresh_token'
+
+    id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('user_profile.id'), unique=True)
+    user: Mapped[UserProfile] = relationship('UserProfile', back_populates='refresh_user')
+    token: Mapped[str] = mapped_column(String)
+    
 
 class Category(Base):
     __tablename__ = 'category'
@@ -42,6 +53,9 @@ class Category(Base):
     category_product: Mapped[List['Product']] = relationship('Product', back_populates='category',
                                                              cascade='all, delete-orphan')
 
+    def __str__(self):
+        return self.category_name
+
 
 class SubCategory(Base):
     __tablename__ = 'sub_category'
@@ -54,6 +68,9 @@ class SubCategory(Base):
 
     sub_category_product: Mapped[List['Product']] = relationship('Product', back_populates='sub_category',
                                                                  cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return self.sub_category_name
 
 
 
